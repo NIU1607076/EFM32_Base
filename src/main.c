@@ -62,11 +62,18 @@ static void LedBlink(void *pParameters)
  ******************************************************************************/
 int main(void)
 {
+  /*Initializing the semaphore*/
   /* Chip errata */
   CHIP_Init();
+  BSP_I2C_Init(0x1C);
   /* If first word of user data page is non-zero, enable Energy Profiler trace */
   BSP_TraceProfilerSetup();
 
+  if(I2C_Test() == true){
+	  printf("Who I Am CORRECT!");
+  }else{
+	  printf("Who I Am INCORRECT/WRONG!");
+  }
   /* Initialize LED driver */
   BSP_LedsInit();
   /* Setting state of leds*/
