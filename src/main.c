@@ -56,6 +56,17 @@ static void LedBlink(void *pParameters)
     vTaskDelay(delay);
   }
 }
+int _write(int file, const char *ptr, int len){
+	int x;
+	for(x = 0; x < len; x++){
+		ITM_SendChar(*ptr++);
+	}
+	return (len);
+}
+
+void BSP_I2C_Init(uint8_t addr);
+bool I2C_Test();
+bool I2C_ReadRegister(uint8_t reg, uint8_t *val);
 
 /***************************************************************************//**
  * @brief  Main function
@@ -65,15 +76,43 @@ int main(void)
   /*Initializing the semaphore*/
   /* Chip errata */
   CHIP_Init();
-  BSP_I2C_Init(0x1C);
+
   /* If first word of user data page is non-zero, enable Energy Profiler trace */
   BSP_TraceProfilerSetup();
 
-  if(I2C_Test() == true){
-	  printf("Who I Am CORRECT!");
-  }else{
-	  printf("Who I Am INCORRECT/WRONG!");
+  BSP_I2C_Init(0x3C);
+  int result = I2C_Test();
+  if(!result){
+	  printf("Who I Am INCORRECT/WRONG!\n");
+	  return -1;
   }
+  const uint8_t OUT_XH = 0x28;
+  const uint8_t OUT_XL = 0x29;
+  const uint8_t OUT_YH = 0x2A;
+  const uint8_t OUT_YL = 0x2B;
+  const uint8_t OUT_ZH = 0x2C;
+  const uint8_t OUT_ZL = 0x2D;
+
+  uint8_t xH;
+  uint8_t xL;
+  uint8_t yH;
+  uint8_t yL;
+  uint8_t zH;
+  uint8_t zL;
+
+  while(true){
+    if (I2C_ReadRegister(OUT_XH, &xH) && I2C_ReadRegister(OUT_XL, &xL) 
+        && I2C_ReadRegister(OUT_YH, &yH) && I2C_ReadRegister(OUT_YL, &yL) 
+        && I2C_ReadRegister(OUT_ZH, &zH) && I2C_ReadRegister(OUT_ZL, &zL)){
+      printf("xH: %d -- ", xH);
+      printf("xL: %d -- ", xL);
+      printf("yH: %d -- ", yH);
+      printf("yL: %d -- ", yL);
+      printf("zH: %d -- ", zH);
+      printf("zL: %d\n", zL);
+    }
+  }
+
   /* Initialize LED driver */
   BSP_LedsInit();
   /* Setting state of leds*/

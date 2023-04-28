@@ -109,6 +109,7 @@ bool I2C_ReadRegister(uint8_t reg, uint8_t *val) {
 }
 
 bool I2C_Test() {
+	printf("BEGGINING TEST!");
 	uint8_t data;
 
 	I2C_ReadRegister(0x0F, &data);
