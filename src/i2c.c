@@ -65,6 +65,7 @@ bool I2C_WriteRegister(uint8_t reg, uint8_t data) {
 	        		return ret_value;
 	        }
 	    }
+	return false;
 }
 
 /**
@@ -106,6 +107,7 @@ bool I2C_ReadRegister(uint8_t reg, uint8_t *val) {
 			return true;
 		}
 	}
+	return false;
 }
 
 bool I2C_Test() {

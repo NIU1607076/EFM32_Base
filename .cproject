@@ -115,6 +115,11 @@
 							</tool>
 							<tool id="com.silabs.ide.si32.gcc.cdt.managedbuild.tool.gnu.c.linker.base.1165759153" name="GNU ARM C Linker" superClass="com.silabs.ide.si32.gcc.cdt.managedbuild.tool.gnu.c.linker.base">
 								<option id="com.silabs.ide.si32.gcc.cdt.managedbuild.tool.gnu.c.linker.nostdlibs.2122621392" name="No startup or default libs (-nostdlib)" superClass="com.silabs.ide.si32.gcc.cdt.managedbuild.tool.gnu.c.linker.nostdlibs" value="false" valueType="boolean"/>
+								<option id="com.silabs.ide.si32.gcc.cdt.managedbuild.tool.gnu.c.linker.category.ordering.selection.1726076254" name="Linker input ordering" superClass="com.silabs.ide.si32.gcc.cdt.managedbuild.tool.gnu.c.linker.category.ordering.selection" value="./src/i2c.o;./src/low_power_tick_management.o;./src/main.o;./emlib/em_adc.o;./emlib/em_assert.o;./emlib/em_burtc.o;./emlib/em_cmu.o;./emlib/em_core.o;./emlib/em_dac.o;./emlib/em_emu.o;./emlib/em_gpio.o;./emlib/em_i2c.o;./emlib/em_leuart.o;./emlib/em_rmu.o;./emlib/em_rtc.o;./emlib/em_system.o;./emlib/em_usart.o;./emlib/em_wdog.o;./FreeRTOS/efm32gg/croutine.o;./FreeRTOS/efm32gg/event_groups.o;./FreeRTOS/efm32gg/heap_1.o;./FreeRTOS/efm32gg/list.o;./FreeRTOS/efm32gg/port_gcc.o;./FreeRTOS/efm32gg/queue.o;./FreeRTOS/efm32gg/tasks.o;./FreeRTOS/efm32gg/timers.o;./Drivers/sleep.o;./CMSIS/EFM32GG/startup_gcc_efm32gg.o;./CMSIS/EFM32GG/system_efm32gg.o;./BSP/bsp_stk_leds.o;./BSP/bsp_trace.o" valueType="string"/>
+								<option id="gnu.c.link.option.libs.1382060360" name="Libraries (-l)" superClass="gnu.c.link.option.libs" valueType="libs">
+									<listOptionValue builtIn="false" value="m"/>
+								</option>
+								<option id="com.silabs.ide.si32.gcc.cdt.managedbuild.tool.gnu.c.linker.printffloat.117005968" superClass="com.silabs.ide.si32.gcc.cdt.managedbuild.tool.gnu.c.linker.printffloat" value="true" valueType="boolean"/>
 								<inputType id="cdt.managedbuild.tool.gnu.c.linker.input.1912424490" superClass="cdt.managedbuild.tool.gnu.c.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
 									<additionalInput kind="additionalinput" paths="$(LIBS)"/>

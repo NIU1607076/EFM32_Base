@@ -17,6 +17,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 
 #include "FreeRTOSConfig.h"
 #include "FreeRTOS.h"
@@ -67,6 +68,7 @@ int _write(int file, const char *ptr, int len){
 void BSP_I2C_Init(uint8_t addr);
 bool I2C_Test();
 bool I2C_ReadRegister(uint8_t reg, uint8_t *val);
+bool I2C_WriteRegister(uint8_t reg, uint8_t data);
 
 /***************************************************************************//**
  * @brief  Main function
@@ -86,6 +88,20 @@ int main(void)
 	  printf("Who I Am INCORRECT/WRONG!\n");
 	  return -1;
   }
+
+
+  if(!I2C_WriteRegister(0x20, 0x30)){//01110000
+	  return -1;
+  }
+
+  if(!I2C_WriteRegister(0x21, 0x00)){
+  	  return -1;
+  }
+
+  if(!I2C_WriteRegister(0x22, 0x00)){
+    	  return -1;
+  }
+
   const uint8_t OUT_XH = 0x28;
   const uint8_t OUT_XL = 0x29;
   const uint8_t OUT_YH = 0x2A;
@@ -100,42 +116,32 @@ int main(void)
   uint8_t zH;
   uint8_t zL;
 
+  uint16_t x;
+  uint16_t y;
+  uint16_t z;
+
+  float heading = 0;
+  float mag_scale = 0.00014;
+  float pi = 3.1415;
+
   while(true){
     if (I2C_ReadRegister(OUT_XH, &xH) && I2C_ReadRegister(OUT_XL, &xL) 
         && I2C_ReadRegister(OUT_YH, &yH) && I2C_ReadRegister(OUT_YL, &yL) 
         && I2C_ReadRegister(OUT_ZH, &zH) && I2C_ReadRegister(OUT_ZL, &zL)){
-      printf("xH: %d -- ", xH);
-      printf("xL: %d -- ", xL);
-      printf("yH: %d -- ", yH);
-      printf("yL: %d -- ", yL);
-      printf("zH: %d -- ", zH);
-      printf("zL: %d\n", zL);
+
+    	x = (xH << 8) | xL;
+    	y = (yH << 8) | yL;
+    	z = (zH << 8) | zL;
+
+	    // printf("x: %d <||> ", x);
+	    // printf("y: %d <||> ", y);
+	    // printf("z: %d <||> \n", z);
+
+	    heading = 180.0 / (pi * atan2(((float)x*mag_scale), ((float)y*mag_scale)));
+
+	    printf("HEADING: %.2f \n", heading);
     }
   }
-
-  /* Initialize LED driver */
-  BSP_LedsInit();
-  /* Setting state of leds*/
-  BSP_LedSet(0);
-  BSP_LedSet(1);
-
-  /* Initialize SLEEP driver, no calbacks are used */
-  SLEEP_Init(NULL, NULL);
-#if (configSLEEP_MODE < 3)
-  /* do not let to sleep deeper than define */
-  SLEEP_SleepBlockBegin((SLEEP_EnergyMode_t)(configSLEEP_MODE + 1));
-#endif
-
-  /* Parameters value for taks*/
-  static TaskParams_t parametersToTask1 = { pdMS_TO_TICKS(1000), 0 };
-  static TaskParams_t parametersToTask2 = { pdMS_TO_TICKS(500), 1 };
-
-  /*Create two task for blinking leds*/
-  xTaskCreate(LedBlink, (const char *) "LedBlink1", STACK_SIZE_FOR_TASK, &parametersToTask1, TASK_PRIORITY, NULL);
-  xTaskCreate(LedBlink, (const char *) "LedBlink2", STACK_SIZE_FOR_TASK, &parametersToTask2, TASK_PRIORITY, NULL);
-
-  /*Start FreeRTOS Scheduler*/
-  vTaskStartScheduler();
 
   return 0;
 }
