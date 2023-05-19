@@ -45,7 +45,7 @@ void ReadMagnetometer( void * pvParameters )
 
 			xQueueSend( xQueue, ( void * ) &coordsToSend, ( TickType_t ) 0 );
 
-			xTaskDelay(delay);
+			vTaskDelay(delay);
 		}
 	}
 }

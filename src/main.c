@@ -17,6 +17,8 @@
 
 #include "i2c.h"
 #include "ReadingTask.h"
+#include "ProcessDataTask.h"
+#include "WritingTask.h"
 
 typedef struct
 {
@@ -36,6 +38,7 @@ typedef struct
 #define ITEM_SIZE       sizeof( Coords_t )
 
 QueueHandle_t xQueue;
+QueueHandle_t xQueue2;
 
 int _write(int file, const char *ptr, int len)
 {
@@ -82,9 +85,15 @@ int main(void)
   /* pxQueueBuffer was not NULL so xQueue should not be NULL. */
   configASSERT( xQueue );
 
+  xQueue2 = xQueueCreate( QUEUE_LENGTH,
+                               sizeof(float));
+
+  configASSERT( xQueue2 );
+
   BaseType_t xReturnedReader;
   TaskHandle_t xHandleReader = NULL;
-  static TaskParams_t parametersToTask1 = { pdMS_TO_TICKS(1000), 0 };
+  static TaskParams_t parametersToTask1 = { pdMS_TO_TICKS(200), 0 };
+
   /* Create the task, storing the handle. */
   xReturnedReader = xTaskCreate(
 		  	  	  ReadMagnetometer,       /* Function that implements the task. */
@@ -94,12 +103,34 @@ int main(void)
 				  tskIDLE_PRIORITY,/* Priority at which the task is created. */
 				  &xHandleReader );      /* Used to pass out the created task's handle. */
 
-  if( xReturnedReader == pdPASS )
+  BaseType_t xReturnedProcessor;
+  TaskHandle_t xHandleProcessor = NULL;
+  xReturnedProcessor = xTaskCreate(
+		  	  	  ProcessData,       
+				  (const char*) "ProcessData",          
+				  STACK_SIZE_FOR_TASK,      
+				  &parametersToTask1,    
+				  tskIDLE_PRIORITY,
+				  &xHandleProcessor );      
+
+  BaseType_t xReturnedWriter;
+  TaskHandle_t xHandleWriter = NULL;
+  xReturnedWriter = xTaskCreate(
+				  WriteOrientation,
+				  (const char*) "WriteOrientation",
+				  STACK_SIZE_FOR_TASK,      
+				  &parametersToTask1,    
+				  tskIDLE_PRIORITY,
+				  &xHandleWriter );   
+
+  if( xReturnedReader == pdPASS && xReturnedProcessor == pdPASS && xReturnedWriter == pdPASS )
   {
 	  vTaskStartScheduler();
   }else{
 	  /* The task was created.  Use the task's handle to delete the task. */
 	  vTaskDelete( xHandleReader );
+	  vTaskDelete( xHandleProcessor );
+	  vTaskDelete( xReturnedWriter );
   }
 
 

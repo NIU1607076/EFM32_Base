@@ -1,6 +1,10 @@
 #include "stdbool.h"
+#include <stdio.h>
+#include <stdlib.h>
+
 #include "FreeRTOS.h"
 #include "queue.h"
+#include "math.h"
 
 typedef struct
 {
@@ -20,15 +24,14 @@ float pi = 3.1415;
 
 void ProcessData( void * pvParameters )
 {
-	TaskParams_t     * pData = (TaskParams_t*) pvParameters;
-  	const portTickType delay = pData->delay;
   	Coords_t coords;
 	uint16_t x;
 	uint16_t y;
 	extern QueueHandle_t xQueue;
+	extern QueueHandle_t xQueue2;
 
 	while(true){
-		if( xQueueReceive( xQueue, &(coords),( TickType_t ) 10 ) == pdPASS )
+		if( xQueueReceive( xQueue, &(coords),( TickType_t ) portMAX_DELAY ) == pdPASS )
 		{
 			x = coords.x;
 			y = coords.y;
@@ -37,14 +40,13 @@ void ProcessData( void * pvParameters )
 			y = 0;
 		}
 
-		heading = 180.0 / (pi * atan2(((float)x * mag_scale), ((float)y * mag_scale)));
+		heading = (float)((atan2((float)y*mag_scale, (float)x*mag_scale) * 180) / pi);
 		if (heading < 0)
 		{
 			heading = 360 + heading;
 		}
 
-		printf("HEADING: %.2f \n", heading); //TODO: Put the heading value in a queue
-
-		xTaskDelay(delay);
+		printf("HEADING: %.2f \n", heading);
+		xQueueSend( xQueue2, ( void * ) &heading, ( TickType_t ) 0 );
 	}
 }

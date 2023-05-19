@@ -111,12 +111,11 @@ bool I2C_ReadRegister(uint8_t reg, uint8_t *val) {
 }
 
 bool I2C_Test() {
-	printf("BEGGINING TEST!");
+	printf("BEGGINING TEST!\n");
 	uint8_t data;
 
 	I2C_ReadRegister(0x0F, &data);
 
-	printf("I2C: %02X\n", data);
 
 	if (data == 0x3D) {
 		return true;
