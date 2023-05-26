@@ -28,8 +28,8 @@ typedef struct
 
 typedef struct
 {
-	uint16_t x;
-	uint16_t y;
+	int16_t x;
+	int16_t y;
 } Coords_t;
 
 #define STACK_SIZE_FOR_TASK (configMINIMAL_STACK_SIZE + 10)
@@ -67,10 +67,6 @@ int main(void)
   if (!I2C_WriteRegister(0x20, 0x30) || !I2C_WriteRegister(0x21, 0x00) || !I2C_WriteRegister(0x22, 0x00))
   {
     return -1;
-  }
-
-  while(true){
-	  TEST();
   }
 
   xQueue = xQueueCreate( QUEUE_LENGTH,

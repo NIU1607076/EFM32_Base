@@ -14,8 +14,8 @@ typedef struct
 
 typedef struct
 {
-	uint16_t x;
-	uint16_t y;
+	int16_t x;
+	int16_t y;
 } Coords_t;
 
 float heading = 0;
@@ -25,8 +25,8 @@ float pi = 3.1415;
 void ProcessData( void * pvParameters )
 {
   	Coords_t coords;
-	uint16_t x;
-	uint16_t y;
+	int16_t x;
+	int16_t y;
 	extern QueueHandle_t xQueue;
 	extern QueueHandle_t xQueue2;
 
