@@ -64,19 +64,13 @@ int main(void)
     return -1;
   }
 
-  if (!I2C_WriteRegister(0x20, 0x30))
+  if (!I2C_WriteRegister(0x20, 0x30) || !I2C_WriteRegister(0x21, 0x00) || !I2C_WriteRegister(0x22, 0x00))
   {
     return -1;
   }
 
-  if (!I2C_WriteRegister(0x21, 0x00))
-  {
-    return -1;
-  }
-
-  if (!I2C_WriteRegister(0x22, 0x00))
-  {
-    return -1;
+  while(true){
+	  TEST();
   }
 
   xQueue = xQueueCreate( QUEUE_LENGTH,
